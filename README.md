@@ -2,6 +2,11 @@
 
 ![Teaser image](./docs/img/teaser.png)
 
+--------------------------------------------------------------------------------------------------
+Designed the apptainer file to produce custom wheel files for supporting CUDA 13.0 + Python 3.10 on RTX 5090.
+This repo was dependency to a larger one. Manual custom compilation required to save time during installation.
+--------------------------------------------------------------------------------------------------
+
 **Modular Primitives for High-Performance Differentiable Rendering**<br>
 Samuli Laine, Janne Hellsten, Tero Karras, Yeongho Seol, Jaakko Lehtinen, Timo Aila<br>
 [http://arxiv.org/abs/2011.03277](http://arxiv.org/abs/2011.03277)
@@ -13,6 +18,20 @@ To install:
 pip install setuptools wheel ninja
 pip install git+https://github.com/NVlabs/nvdiffrast.git --no-build-isolation
 ```
+
+
+--------------------------------------------------------------------------------------------------
+### Install using apptainer
+
+```bash
+apptainer build --sandbox --fakeroot _0nvdiffrast _0nvdiffrast.def
+```
+Choose one of the following commands (no GPU or GPU support)
+```bash
+1) apptainer shell -H /home/ignacio/ --pwd / -w --fakeroot _0nvdiffrast
+2) apptainer shell -H /home/ignacio/ --pwd / --nv _0nvdiffrast
+```
+--------------------------------------------------------------------------------------------------
 
 See &#x261E;&#x261E; [nvdiffrast documentation](https://nvlabs.github.io/nvdiffrast) &#x261C;&#x261C; for more information.
 
