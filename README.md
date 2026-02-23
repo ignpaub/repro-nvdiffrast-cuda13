@@ -23,9 +23,13 @@ pip install git+https://github.com/NVlabs/nvdiffrast.git --no-build-isolation
 --------------------------------------------------------------------------------------------------
 ### Before starting
 Edit .def file and modify it as needed:
+
   a) Python: 3.10
+  
   b) CUDA: 13.0 
+  
   c) torch+torchvision+torchaudio (with CUDA 13.0 support): 2.10.0+0.25.0+2.10.0
+  
   d) TORCH_CUDA_ARCH_LIST: 8.0/8.6/8.9/9.0/12.0
 
 ### Install using apptainer
@@ -45,6 +49,7 @@ python3 setup.py bdist_wheel
 ```
 
 If success, wheel will be created at /nvdiffrast/dist/.
+
 It was renamed to nvdiffrast-0.4.0+cu130.sm120-cp310-linux_x86_64.whl to remember supported versions.
 --------------------------------------------------------------------------------------------------
 
