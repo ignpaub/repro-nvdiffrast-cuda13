@@ -1,58 +1,60 @@
-## Nvdiffrast &ndash; Modular Primitives for High-Performance Differentiable Rendering
 
-![Teaser image](./docs/img/teaser.png)
+# Unofficial nvdiffrast wheels (CUDA 13.0, Python 3.10, SM_120)
 
---------------------------------------------------------------------------------------------------
-Designed the apptainer file to produce custom wheel files for supporting x86_64 CUDA 13.0 + Python 3.10 on RTX 5090.
-This repo was dependency to a larger one. Manual custom compilation required to save time during installation.
---------------------------------------------------------------------------------------------------
+**What is this?** Prebuilt Linux wheels for [NVlabs/nvdiffrast] targeting:
+- CUDA **13.0** (`cu130`)
+- Python **3.10**
+- Torch **2.10**, Torchvision **0.25.0**, Torchaudio **2.10.0**
+- GPU archs compiled in: `sm_80; sm_86; sm_89; sm_90; sm_120`  
 
-**Modular Primitives for High-Performance Differentiable Rendering**<br>
-Samuli Laine, Janne Hellsten, Tero Karras, Yeongho Seol, Jaakko Lehtinen, Timo Aila<br>
-[http://arxiv.org/abs/2011.03277](http://arxiv.org/abs/2011.03277)
+> Upstream project and docs: [NVlabs/nvdiffrast]. [1](https://github.com/NVlabs/nvdiffrast)
 
-Nvdiffrast is a PyTorch library that provides high-performance primitive operations for rasterization-based differentiable rendering.
+---
 
-To install:
+
+## Requirements
+
+- **NVIDIA driver**: R580+ on Linux for CUDA 13.0 (check with `nvidia-smi`). [2](https://docs.nvidia.com/cuda/archive/13.0.0/cuda-toolkit-release-notes/index.html)[3](https://www.servethehome.com/nvidia-cuda-toolkit-13-0-is-out/)  
+- **PyTorch**: Install a PyTorch build that matches your CUDA line **before** installing this wheel.
+
+---
+
+
+## Installation
+
+A) If running exact same targets:
+```bash
+pip3 install nvdiffrast-0.4.0-cp310-cp310-linux_x86_64.whl
 ```
-pip install setuptools wheel ninja
-pip install git+https://github.com/NVlabs/nvdiffrast.git --no-build-isolation
-```
 
-
---------------------------------------------------------------------------------------------------
-### Before starting
-Edit .def file and modify it as needed:
-
-  a) Python: 3.10
-  
-  b) CUDA: 13.0 (get file online!)
-  
-  c) torch+torchvision+torchaudio (with CUDA 13.0 support): 2.10.0+0.25.0+2.10.0
-  
-  d) TORCH_CUDA_ARCH_LIST: 8.0/8.6/8.9/9.0/12.0
-
-### Install using apptainer
-
+B) Otherwise edit the apptainer file (.def) so as to specify different versions, recompile, run (choose 1 or 2) and obtain your custom wheel file:
 ```bash
 apptainer build --sandbox --fakeroot _0nvdiffrast _0nvdiffrast.def
+
+1) apptainer shell -H /home/user/ --pwd / -w --fakeroot _0nvdiffrast
+2) apptainer shell -H /home/user/ --pwd / --nv _0nvdiffrast
+
+  cd /nvdiffrast-cu130-wheels && python3 setup.py bdist_wheel
 ```
-Choose one of the following commands (no GPU or GPU support)
+
+If success, wheel will be created at /nvdiffrast-cu130-wheels/dist/.
+
+Renaming it is free to user, but remember pip wheel naming guidelines.
+
+---
+
+## Test
+
 ```bash
-1) apptainer shell -H /home/ignacio/ --pwd / -w --fakeroot _0nvdiffrast
-2) apptainer shell -H /home/ignacio/ --pwd / --nv _0nvdiffrast
+python3 - <<'PY'
+import torch, nvdiffrast.torch as dr
+print("Torch:", torch.__version__, "CUDA:", torch.version.cuda)
+print("Arch list:", torch.cuda.get_arch_list())
+ctx = dr.RasterizeCudaContext(device='cuda:0')
+print("nvdiffrast OK:", ctx is not None)
+PY
 ```
 
-### Create the wheel file
-```bash
-python3 setup.py bdist_wheel
-```
-
-If success, wheel will be created at /nvdiffrast/dist/.
-
-It was renamed to nvdiffrast-0.4.0+cu130.sm120-cp310-linux_x86_64.whl to remember supported versions.
-
---------------------------------------------------------------------------------------------------
 
 See &#x261E;&#x261E; [nvdiffrast documentation](https://nvlabs.github.io/nvdiffrast) &#x261C;&#x261C; for more information.
 
@@ -63,8 +65,6 @@ Copyright &copy; 2020&ndash;2025, NVIDIA Corporation. All rights reserved.
 This work is made available under the [Nvidia Source Code License](https://github.com/NVlabs/nvdiffrast/blob/main/LICENSE.txt).
 
 For business inquiries, please visit our website and submit the form: [NVIDIA Research Licensing](https://www.nvidia.com/en-us/research/inquiries/)
-
-We do not currently accept outside code contributions in the form of pull requests.
 
 Environment map stored as part of `samples/data/envphong.npz` is derived from a Wave Engine
 [sample material](https://github.com/WaveEngine/Samples-2.5/tree/master/Materials/EnvironmentMap/Content/Assets/CubeMap.cubemap)
